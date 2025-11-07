@@ -1,5 +1,4 @@
 /* -*- P4_16 -*- */
-/* Test reject funtion for Apollo Tuna NIC architecture */
 
 #include <core.p4>
 #include <tuna.p4>

@@ -1,23 +1,23 @@
 #!/bin/bash
 
-echo "测试结果" > report
+echo "Test Results" > report
 
 test_all() {
     sudo -s << EOF
         source cmd_api.sh
         index=1
 
-        # 进入模拟器运行环境
+        # Enter simulator environment
         source p4setup.bash
 
-        # 获取目录列表并处理每个目录
+        # Get directory list and process each directory
         report_path=\$PROJECT_PATH/p4-playground/test/report
         dirs=\$(ls -1 \$PROJECT_PATH/p4-playground/tuna/app)
         for case_name in \$dirs; do
             dir_path="\$PROJECT_PATH/p4-playground/tuna/app/\$case_name"
-            # 检查是否为目录
+            # Check if it is a directory
             if [ -d \$dir_path ]; then
-                print_info "测试: \$case_name"
+                print_info "Testing: \$case_name"
                 cd \$dir_path
                 ./test.sh
                 if [ \$? -eq 0 ]; then
@@ -28,9 +28,9 @@ test_all() {
                 index=\$((index + 1))
             fi
         done
-        print_info "测试结果保存在./report文件中"
+        print_info "Test results saved in ./report file"
 
-        # 退出模拟器运行环境
+        # Exit simulator environment
         deactivate
 EOF
 }
@@ -43,7 +43,7 @@ test_single() {
     sudo -E -s << EOF
         source cmd_api.sh
 
-        # 进入模拟器运行环境
+        # Enter simulator environment
         source p4setup.bash
 
         if [ \$app_or_sample = "app" ]; then
@@ -54,9 +54,9 @@ test_single() {
 
         report_path=\$PROJECT_PATH/p4-playground/test/report
 
-        # 检查是否为目录
+        # Check if it is a directory
         if [ -d \$dir_path ]; then
-            print_info "测试: \$case_name"
+            print_info "Testing: \$case_name"
             cd \$dir_path
             ./test.sh
             if [ \$? -eq 0 ]; then
@@ -65,14 +65,14 @@ test_single() {
                 printf "\033[31m%-20s %s\033[0m\n" "\$case_name" "FAILED" >> \$report_path
             fi
         fi
-        print_info "测试结果保存在./report文件中"
+        print_info "Test results saved in ./report file"
 
-        # 退出模拟器运行环境
+        # Exit simulator environment
         deactivate
 EOF
 }
 
-# 解析参数并执行
+# Parse arguments and execute
 if [ $# -eq 0 ]; then
     test_all
 else

@@ -5,7 +5,7 @@
 import re
 import ast
 import operator
-#import numpy as np  # 用于处理按位取反
+#import numpy as np  # For handling bitwise NOT
 import sys
 
 from scapy.all import (
@@ -25,34 +25,34 @@ iface = 'eth0'
 dst_mac="62:9b:0c:db:ac:20"
 
 def safe_eval(expr):
-    # 允许的操作符
+    # Allowed operators
     allowed_ops = {
         ast.Add: operator.add,
         ast.Sub: operator.sub,
         ast.BitAnd: operator.and_,
         ast.BitOr: operator.or_,
         ast.BitXor: operator.xor,
-        ast.Invert: lambda x: ~int(x),  # 按位取反
+        ast.Invert: lambda x: ~int(x),  # Bitwise NOT
         ast.Lt: operator.lt,
         ast.LtE: operator.le,
         ast.Gt: operator.gt,
         ast.GtE: operator.ge,
         ast.Eq: operator.eq,
         ast.NotEq: operator.ne,
-        ast.USub: operator.neg,  # 负号
+        ast.USub: operator.neg,  # Unary minus
     }
-    
+
     def _eval(node):
-        if isinstance(node, ast.Num):  # 数字
+        if isinstance(node, ast.Num):  # Number
             return node.n
-        elif isinstance(node, ast.BinOp):  # 二元运算
+        elif isinstance(node, ast.BinOp):  # Binary operation
             left = _eval(node.left)
             right = _eval(node.right)
             return allowed_ops[type(node.op)](left, right)
-        elif isinstance(node, ast.UnaryOp):  # 一元运算（取反、负号）
+        elif isinstance(node, ast.UnaryOp):  # Unary operation (NOT, minus)
             operand = _eval(node.operand)
             return allowed_ops[type(node.op)](operand)
-        elif isinstance(node, ast.Compare):  # 比较运算
+        elif isinstance(node, ast.Compare):  # Comparison operation
             left = _eval(node.left)
             for op, comparator in zip(node.ops, node.comparators):
                 right = _eval(comparator)
@@ -61,13 +61,13 @@ def safe_eval(expr):
                 left = right
             return True
         else:
-            raise ValueError(f"不支持的表达式类型: {type(node).__name__}")
-    
+            raise ValueError(f"Unsupported expression type: {type(node).__name__}")
+
     try:
         node = ast.parse(expr, mode='eval')
         return _eval(node.body)
     except (SyntaxError, ValueError, KeyError) as e:
-        raise ValueError(f"无效表达式: {e}")
+        raise ValueError(f"Invalid expression: {e}")
 
 # Define custom packet class for P4calc
 class P4calc(Packet):

@@ -2,14 +2,13 @@
 
 source ../../../test/cmd_api.sh
 
-# 主函数
 test() {
     local test_name="ping"
     local result=0
-    print_info "${test_name}开始测试..."
+    print_info "${test_name} start testing..."
 
-    # topo1测试：两个同网段主机的网卡直连
-    print_info "测试topology1.json..."
+    # topology1: The NICs of two hosts on the same network segment are directly connected
+    print_info "testing topology1.json..."
     log_file="${test_name}_topo1.log"
     {
         make TOPO=topology1.json << EOF
@@ -24,8 +23,8 @@ EOF
     check_log_result "$log_file" "3 packets transmitted, 3 received" "h2 ping h1 (topo1)" || result=1
     check_log_result "$log_file" "(2/2 received)" "pingall (topo1)" || result=1
 
-    # topo2测试：三个同网段主机的网卡通过一个bridge连接
-    print_info "测试topology2.json..."
+    # topology2: The NICs of three hosts on the same network segment are connected via a bridge
+    print_info "testing topology2.json..."
     log_file="${test_name}_topo2.log"
     {
         make TOPO=topology2.json << EOF
@@ -42,8 +41,9 @@ EOF
     check_log_result "$log_file" "4 packets transmitted, 4 received" "h3 ping h2 (topo2)" || result=1
     check_log_result "$log_file" "(6/6 received)" "pingall (topo2)" || result=1
 
-    # topo3测试：四个同网段主机的网卡分两组，组内由一个bridge连接，两个bridge直连
-    print_info "测试topology3.json..."
+    # topology3: The NICs of four hosts on the same network segment are divided into two groups.
+    #            The NICs within each group are connected by a bridge, and the two bridges are directly connected to each other
+    print_info "testing topology3.json..."
     log_file="${test_name}_topo3.log"
     {
         make TOPO=topology3.json << EOF
@@ -63,13 +63,12 @@ EOF
     check_log_result "$log_file" "(12/12 received)" "pingall (topo3)" || result=1
 
     if [ $result -eq 0 ]; then
-        print_info "${test_name}测试通过"
+        print_info "${test_name} test passed"
         return 0
     else
-        print_error "${test_name}测试失败"
+        print_error "${test_name} test failed"
         return 1
     fi
 }
 
-# 执行主函数
 test

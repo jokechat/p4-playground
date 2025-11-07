@@ -1,25 +1,38 @@
-# how to use test scripts
+# How to use test scripts
 
-## 完整流程
+## Complete Workflow
 
-- 运行test.sh执行所有用例
-  - 遍历tuna/app下每个case
-  - 进入模拟器运行环境
-  - 运行测试用例
+- Run `test.sh` to execute test cases
+  - Enter the simulator runtime environment
+  - Traverse each case under tuna/app, or enter a specified case
+  - Run the test case
 ```bash
-sudo ./test.sh
+./test.sh
 ```
 
-## 模拟器测试
+## Simulator testing
 
-`test.sh` 是一个用例运行脚本，使用mininet + bmv2进行模拟器测试。
+`test.sh` is a test case running script that uses mininet + bmv2 for simulator testing
 
-### 功能特性
+### Features
 
-- 运行所有用例
+- Supports running all test cases
+- Supports running a single test case
 
-### 使用方法
+### Usage
+
+#### Run all test cases (default behavior)
 
 ```bash
-sudo ./test.sh
+# Call without parameters to run all test cases
+./test.sh
+```
+
+#### Run a single test case
+
+```bash
+# Call with parameters to run a single simulator test case
+# The first parameter is the directory where the test case is located
+# The second parameter is the test case name
+./test.sh app l3_forward
 ```

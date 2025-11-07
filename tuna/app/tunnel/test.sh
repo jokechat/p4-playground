@@ -2,13 +2,13 @@
 
 source ../../../test/cmd_api.sh
 
-# 主函数
 test() {
     local test_name="tunnel"
     local result=0
-    print_info "${test_name}开始测试..."
+    print_info "${test_name} start testing..."
 
-    # topo1测试：两个同网段主机的网卡直连，主机配置私网IP，网卡上通过公网IP连接
+    # topology1: The NICs of two hosts on the same network segment are directly connected
+    #            The host is configured with a private network IP and connects via a public network IP through its NIC
     log_file="${test_name}.log"
     rm pcaps/*.txt | true
     {
@@ -38,13 +38,12 @@ EOF
     check_log_result "${pcap_name}.txt" "\"192.168.1.3\",\"192.168.1.2\",\"1\"" "n2 to h2 pcap" 2 || result=1
 
     if [ $result -eq 0 ]; then
-        print_info "${test_name}测试通过"
+        print_info "${test_name} test passed"
         return 0
     else
-        print_error "${test_name}测试失败"
+        print_error "${test_name} test failed"
         return 1
     fi
 }
 
-# 执行主函数
 test

@@ -1,5 +1,4 @@
 /* -*- P4_16 -*- */
-/* Test reject funtion for Apollo Tuna NIC architecture */
 
 #include <core.p4>
 #include <tuna.p4>
@@ -122,7 +121,7 @@ control cIngress(inout headers_t hdr,
         actions = {
             gre_decapsulation;
         }
-        const entries = {  // 匹配公网IP进行解封装
+        const entries = {  // match public network IP to decap
             0x0a000102 : gre_decapsulation();
             0x0a000103 : gre_decapsulation();
         }
@@ -130,7 +129,8 @@ control cIngress(inout headers_t hdr,
     }
     
     apply {
-        if (hdr.ipv4.isValid() && hdr.gre.isValid()) {  // 带gre进入解封装处理
+        // GRE decap
+        if (hdr.ipv4.isValid() && hdr.gre.isValid()) {
             gre_decap.apply();
         }
     }
@@ -230,17 +230,18 @@ control cEgress(inout headers_t hdr,
         hdr.gre.protocolType = TYPE_IPV4;
         
         hdr.innerIpv4.setValid();
-        hdr.innerIpv4 = hdr.ipv4;  // 原始ipv4复制到内层ipv4，外层ipv4变为封装头重新赋值
+        // Copy the original IPv4 to the inner IPv4, and reassign the outer IPv4 as an encapsulation header
+        hdr.innerIpv4 = hdr.ipv4;
         hdr.ipv4.version = 4;
         hdr.ipv4.ihl = 5;
         hdr.ipv4.diffserv = 0;
-        hdr.ipv4.totalLen = hdr.innerIpv4.totalLen + 24;  // 增加了外层ipv4（20B）和gre（4B）
+        hdr.ipv4.totalLen = hdr.innerIpv4.totalLen + 24;  // Added outer IPv4 (20B) and GRE (4B)
         hdr.ipv4.identification = 0;
         hdr.ipv4.flags = 2;
         hdr.ipv4.fragOffset = 0;
         hdr.ipv4.ttl = 64;
         hdr.ipv4.protocol = PROTOCOL_GRE;
-        hdr.ipv4.hdrChecksum = 0;  // checksum重新计算，TBD
+        hdr.ipv4.hdrChecksum = 0;  // Checksum need to be recalculated
         hdr.ipv4.srcAddr = srcAddr;
         hdr.ipv4.dstAddr = dstAddr;
     }
@@ -252,7 +253,7 @@ control cEgress(inout headers_t hdr,
         actions = {
             gre_encapsulation;
         }
-        const entries = {  // 匹配私网IP进行封装，通过公网IP互联
+        const entries = {  // // match private network IP to encap
             0xc0a80102 : gre_encapsulation(0x0a000103, 0x0a000102);
             0xc0a80103 : gre_encapsulation(0x0a000102, 0x0a000103);
         }
@@ -260,7 +261,8 @@ control cEgress(inout headers_t hdr,
     }
 
     apply {
-        if (hdr.ipv4.isValid() && !hdr.gre.isValid()) {  // 不带gre进入封装处理
+        // GRE encap
+        if (hdr.ipv4.isValid() && !hdr.gre.isValid()) {
             gre_encap.apply();
         }
     }

@@ -2,13 +2,12 @@
 
 source ../../../test/cmd_api.sh
 
-# 主函数
 test() {
     local test_name="calculator"
     local result=0
-    print_info "${test_name}开始测试..."
+    print_info "${test_name} start testing..."
 
-    # topo1测试：两个同网段主机的网卡直连
+    # topology1: The NICs of two hosts on the same network segment are directly connected
     log_file="${test_name}.log"
     recv_log="recv.log"
     send_log="send.log"
@@ -39,13 +38,12 @@ EOF
     check_log_result "$send_log" "calculator test success!" "total result is" || result=1
 
     if [ $result -eq 0 ]; then
-        print_info "${test_name}测试通过"
+        print_info "${test_name} test passed"
         return 0
     else
-        print_error "${test_name}测试失败"
+        print_error "${test_name} test failed"
         return 1
     fi
 }
 
-# 执行主函数
 test

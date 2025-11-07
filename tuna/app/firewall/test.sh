@@ -2,13 +2,12 @@
 
 source ../../../test/cmd_api.sh
 
-# 主函数
 test() {
     local test_name="firewall"
     local result=0
-    print_info "${test_name}开始测试..."
+    print_info "${test_name} start testing..."
 
-    # topo1测试：三个同网段主机的网卡通过一个bridge连接
+    # topology1: The NICs of three hosts on the same network segment are connected via a bridge
     log_file="${test_name}.log"
     {
         make << EOF
@@ -29,13 +28,12 @@ EOF
     check_log_result "$log_file" "(2/6 received)" "pingall result" || result=1
 
     if [ $result -eq 0 ]; then
-        print_info "${test_name}测试通过"
+        print_info "${test_name} test passed"
         return 0
     else
-        print_error "${test_name}测试失败"
+        print_error "${test_name} test failed"
         return 1
     fi
 }
 
-# 执行主函数
 test
