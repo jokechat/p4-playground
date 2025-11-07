@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /* -*- P4_16 -*- */
 
 #include <core.p4>
@@ -95,7 +96,7 @@ control cIngress(inout headers_t hdr,
         }
         size = 1024;
     }
-    
+
     apply {
         blacklist.apply();
     }

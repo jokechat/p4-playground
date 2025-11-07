@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /* -*- P4_16 -*- */
 
 #include <core.p4>
@@ -113,7 +114,7 @@ control cIngress(inout headers_t hdr,
         hdr.ipv4.setInvalid();
         hdr.gre.setInvalid();
     }
-    
+
     table gre_decap {
         key = {
             hdr.ipv4.dstAddr: exact;
@@ -127,7 +128,7 @@ control cIngress(inout headers_t hdr,
         }
         size = 1024;
     }
-    
+
     apply {
         // GRE decap
         if (hdr.ipv4.isValid() && hdr.gre.isValid()) {
@@ -228,7 +229,7 @@ control cEgress(inout headers_t hdr,
         hdr.gre.version = 0;
         hdr.gre.rsv1 = 0;
         hdr.gre.protocolType = TYPE_IPV4;
-        
+
         hdr.innerIpv4.setValid();
         // Copy the original IPv4 to the inner IPv4, and reassign the outer IPv4 as an encapsulation header
         hdr.innerIpv4 = hdr.ipv4;
